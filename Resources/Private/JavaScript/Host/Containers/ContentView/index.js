@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import mergeClassNames from 'classnames';
 import {$transform, $get} from 'plow-js';
 
+import {Frame} from 'Components/index';
+
 import style from './style.css';
 
 @connect($transform({
@@ -33,12 +35,22 @@ export default class ContentView extends Component {
 
         return (
             <div className={classNames} id="neos__contentView">
-                <iframe
+                <Frame
                     src={src}
                     frameBorder="0"
                     name={'neos-content-main'}
                     data-context-path={contextPath}
                     className={style.contentView__item}
+                    onContentLoad={frame => {
+                        const loadEvent = frame.document.createEvent('CustomEvent');
+                        loadEvent.initCustomEvent('Neos:UI:ContentLoaded', true, true, {
+                            api: {
+                                test: () => console.log('Api connection works')
+                            }
+                        });
+
+                        frame.document.dispatchEvent(loadEvent);
+                    }}
                     />
             </div>
         );
