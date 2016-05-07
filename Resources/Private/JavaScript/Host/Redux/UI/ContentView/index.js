@@ -21,7 +21,7 @@ export const actionTypes = {
     SET_SRC
 };
 
-const focusNode = createAction(FOCUS_NODE, (contextPath, typoscriptPath) => ({contextPath, typoscriptPath}));
+const focusNode = createAction(FOCUS_NODE, (contextPath, typoscriptPath, x, y) => ({contextPath, typoscriptPath, x, y}));
 const hoverNode = createAction(HOVER_NODE, (contextPath, typoscriptPath) => ({contextPath, typoscriptPath}));
 const unhoverNode = createAction(UNHOVER_NODE, contextPath => ({contextPath}));
 const setContextPath = createAction(SET_CONTEXT_PATH, contextPath => ({contextPath}));
@@ -48,7 +48,9 @@ export const hydrate = state => $set(
     new Map({
         focusedNode: new Map({
             contextPath: '',
-            typoscriptPath: ''
+            typoscriptPath: '',
+            x: 0,
+            y: 0
         }),
         hoveredNode: new Map({
             contextPath: '',
@@ -64,8 +66,8 @@ export const hydrate = state => $set(
 // Export the reducer
 //
 export const reducer = {
-    [FOCUS_NODE]: ({contextPath, typoscriptPath}) => $set('ui.contentView.focusedNode', new Map({contextPath, typoscriptPath})),
-    [HOVER_NODE]: ({contextPath, typoscriptPath}) => $set('ui.contentView.hoveredNode', new Map({contextPath, typoscriptPath})),
+    [FOCUS_NODE]: attributes => $set('ui.contentView.focusedNode', new Map(attributes)),
+    [HOVER_NODE]: (attributes) => $set('ui.contentView.hoveredNode', new Map(attributes)),
     [UNHOVER_NODE]: ({contextPath}) => state => {
         if ($get('ui.contentView.hoveredNode.contextPath', state) === contextPath) {
             return $set('ui.contentView.hoveredNode', '', state);

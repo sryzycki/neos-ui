@@ -13,7 +13,7 @@ export default dispatch => ({
         },
         contentView: {
             focusNode(contextPath, typoscriptPath, x, y) {
-                dispatch(actions.UI.ContentView.focusNode(contextPath, typoscriptPath));
+                dispatch(actions.UI.ContentView.focusNode(contextPath, typoscriptPath, x, y));
             },
             mouseEnterNode(contextPath, typoscriptPath) {
                 dispatch(actions.UI.ContentView.hoverNode(contextPath, typoscriptPath));

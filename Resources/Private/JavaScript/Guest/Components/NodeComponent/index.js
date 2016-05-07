@@ -1,7 +1,8 @@
 import {
     handle,
     stopPropagation,
-    preventDefault
+    preventDefault,
+    position
 } from 'Guest/Process/DOMUtils.js';
 
 import style from './style.css';
@@ -20,7 +21,10 @@ export default (el, api) => {
     //
     // React on guest events
     //
-    handle('click', () => focusNode(contextPath, typoscriptPath), stopPropagation, preventDefault)(el);
+    handle('click', () => {
+        const {x, y} = position(el);
+        focusNode(contextPath, typoscriptPath, x, y);
+    }, stopPropagation, preventDefault)(el);
     handle('mouseover', () => mouseEnterNode(contextPath, typoscriptPath), stopPropagation)(el);
     handle('mouseout', () => mouseLeaveNode(contextPath, typoscriptPath))(el);
 
