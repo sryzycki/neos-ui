@@ -15,7 +15,14 @@ import style from './style.css';
 //
 const exposeApiToGuestFrame = (dispatch, frame) => {
     const loadEvent = frame.document.createEvent('CustomEvent');
+    const documentInformation = frame['@PackageFactory.Guevara:DocumentInformation'];
+
+    if (!documentInformation) {
+        throw new Error('The guest frame doesn\'t seem to contain any document information.');
+    }
+
     loadEvent.initCustomEvent('Neos:UI:ContentLoaded', true, true, {
+        contextPath: documentInformation.metaData.contextPath,
         api: createApi(dispatch)
     });
 

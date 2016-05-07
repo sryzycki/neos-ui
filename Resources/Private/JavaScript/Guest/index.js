@@ -16,7 +16,7 @@ import {
 // Initialize the guest application as soon as the DOM has been fully initialized.
 //
 document.addEventListener('Neos:UI:ContentLoaded', e => {
-    const {api} = e.detail;
+    const {api, contextPath} = e.detail;
 
     //
     // Initialize node components
@@ -32,6 +32,14 @@ document.addEventListener('Neos:UI:ContentLoaded', e => {
         const propertyName = dom.dataset.__cheProperty;
 
         // ckEditor({contextPath, propertyName}, dom, api);
+    });
+
+    //
+    // Make sure, that when no other node is focused,
+    // the host frame gets a signal to focus the document
+    //
+    document.addEventListener('click', () => {
+        api.ui.contentView.focusNode(contextPath);
     });
 
     //
