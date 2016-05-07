@@ -45,8 +45,10 @@ export function* watchFocusedNode() {
         const typoscriptPathAfter = $get('cr.nodes.focused.typoscriptPath', after);
 
         if (nodeBefore.contextPath !== nodeAfter.contextPath) {
-            signals.ui.contentView.nodeBlurred.dispatch(nodeBefore, typoscriptPathBefore);
-            signals.ui.contentView.nodeFocused.dispatch(nodeAfter, typoscriptPathAfter);
+            setTimeout(() => {
+                signals.ui.contentView.nodeBlurred.dispatch(nodeBefore, typoscriptPathBefore);
+                signals.ui.contentView.nodeFocused.dispatch(nodeAfter, typoscriptPathAfter);
+            }, 0);
         }
     }
 }
