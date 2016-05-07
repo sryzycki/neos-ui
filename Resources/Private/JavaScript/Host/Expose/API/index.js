@@ -8,15 +8,6 @@ export default dispatch => ({
             }
         },
         contentView: {
-            setDocumentInformation(documentInformation) {
-                dispatch(actions.UI.ContentView.setContextPath(documentInformation.metaData.contextPath));
-                dispatch(actions.UI.ContentView.setPreviewUrl(documentInformation.metaData.previewUrl));
-
-                Object.keys(documentInformation.nodes).forEach(contextPath => {
-                    const node = documentInformation.nodes[contextPath];
-                    dispatch(actions.CR.Nodes.add(contextPath, node));
-                });
-            },
             focusNode(contextPath, typoScriptPath, x, y) {
 
             },

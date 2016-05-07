@@ -1,9 +1,10 @@
 import 'Shared/Styles/style.css';
 import 'babel-polyfill';
-import {domConnector} from './Process/index';
 
-const {ui} = window.neos;
-const connection = ui.connect();
+import {nodeComponent} from 'Guest/Components/index';
+import {closestContextPath} from 'Guest/Process/DOMUtils.js';
+import ckEditor from 'Guest/Components/Editors/CKEditor/index';
+
 
 //
 // Initialize the guest application as soon as the DOM has been fully initialized.
@@ -11,7 +12,19 @@ const connection = ui.connect();
 document.addEventListener('Neos:UI:ContentLoaded', e => {
     const {api} = e.detail;
 
-    domConnector(ui, connection);
+    //
+    // Initialize node components
+    //
+    [].slice.call(document.querySelectorAll('[data-__che-node-contextpath]'))
+        .forEach(dom => nodeComponent(dom, api));
 
-    api.ui.contentView.setDocumentInformation(window['@PackageFactory.Guevara:DocumentInformation']);
+    //
+    // Initialize inline editors
+    //
+    [].slice.call(document.querySelectorAll('[data-__che-property]')).forEach(dom => {
+        const contextPath = closestContextPath(dom);
+        const propertyName = dom.dataset.__cheProperty;
+
+        ckEditor({contextPath, propertyName}, dom, api);
+    });
 });

@@ -55,3 +55,11 @@ export const position = dom => {
 
     return {x: 0, y: 0};
 };
+
+export const closestContextPath = el => {
+    if (!el) {
+        return null;
+    }
+
+    return el.dataset.__cheNodeContextpath || closestContextPath(el.parentNode);
+};
