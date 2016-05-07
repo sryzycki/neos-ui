@@ -1,7 +1,7 @@
 import debounce from 'lodash.debounce';
 
 import {actions} from 'Guest/Redux/index';
-import {registerToolbar} from 'Guest/Containers/EditorToolbar/index';
+//import {registerToolbar} from 'Guest/Containers/EditorToolbar/index';
 
 import style from './style.css';
 

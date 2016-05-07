@@ -17,7 +17,7 @@ export default class Toolbar extends Component {
         const props = {
             className: style.toolBar__btnGroup__btn
         };
-        const {position, isVisible} = this.props.toolbar;
+        const {position, isVisible, children} = this.props;
         const classNames = mergeClassNames({
             [style.toolBar]: true,
             [style['toolBar--isFree']]: Boolean(position),

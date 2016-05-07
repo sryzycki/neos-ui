@@ -4,15 +4,11 @@ import {connect} from 'react-redux';
 import mergeClassNames from 'classnames';
 import {$get} from 'plow-js';
 
-import {actions} from 'Guest/Redux/index';
-
 import processConfiguration from './ProcessConfiguration/index';
 import * as SubComponents from './SubComponents/index';
 import style from './style.css';
 
-@connect($get('editorToolbar'), {
-    dispatchEditorSignal: actions.EditorToolbar.dispatchSignal
-})
+@connect()
 export default class Toolbar extends Component {
     static propTypes = {
         x: PropTypes.number.isRequired,

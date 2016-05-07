@@ -7,6 +7,7 @@ import {Frame} from 'Components/index';
 import createApi from 'Host/Expose/API/index';
 import {actions} from 'Host/Redux/index';
 
+import NodeToolbar from './NodeToolbar/index';
 import style from './style.css';
 
 //
@@ -58,8 +59,7 @@ const consumeDocumentInformationFromGuestFrame = (dispatch, frame) => {
     isFringeLeft: $get('ui.leftSideBar.isHidden'),
     isFringeRight: $get('ui.rightSideBar.isHidden'),
     isFullScreen: $get('ui.fullScreen.isFullScreen'),
-    src: $get('ui.contentView.src'),
-    contextPath: $get('ui.contentView.contextPath')
+    src: $get('ui.contentView.src')
 }))
 export default class ContentView extends Component {
     static propTypes = {
@@ -67,7 +67,6 @@ export default class ContentView extends Component {
         isFringeRight: PropTypes.bool.isRequired,
         isFullScreen: PropTypes.bool.isRequired,
         src: PropTypes.string.isRequired,
-        contextPath: PropTypes.string.isRequired,
 
         dispatch: PropTypes.func.isRequired
     };
@@ -85,7 +84,6 @@ export default class ContentView extends Component {
             isFringeRight,
             isFullScreen,
             src,
-            contextPath,
             dispatch
         } = this.props;
         const classNames = mergeClassNames({
@@ -100,11 +98,11 @@ export default class ContentView extends Component {
                 <Frame
                     src={src}
                     frameBorder="0"
-                    name="neos-content-main"
-                    data-context-path={contextPath}
-                    className={style.contentView__item}
+                    className={style.contentView__frame}
                     onContentLoad={frame => this.initializeGuestFrame(frame)}
-                    />
+                    >
+                    <NodeToolbar toolbar={{x: 0, y: 0}} />
+                </Frame>
             </div>
         );
     }

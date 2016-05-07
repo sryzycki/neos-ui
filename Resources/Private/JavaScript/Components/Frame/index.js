@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import ReactDOM from 'react-dom';
 
 export default class Frame extends Component {
     static propTypes = {
@@ -44,10 +45,37 @@ export default class Frame extends Component {
             frame.onerror = err => onError(err);
         }
 
+        this._isMounted = true;
+        this.renderFrameContents();
+
         if (onContentLoad) {
             setTimeout(() => onContentLoad(frame), 0);
         }
+    }
 
+    componentDidUpdate() {
+        this.renderFrameContents();
+    }
+
+    renderFrameContents() {
+        if (!this._isMounted) {
+            return;
+        }
+
+        const {iframe} = this.refs;
+        const {children} = this.props;
+        const frameWindow = iframe.contentWindow || iframe;
+        const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+        if (!this._frameComponentRoot) {
+            const FrameComponentRoot = frameDocument.registerElement('neos-ui-root');
+            this._frameComponentRoot = new FrameComponentRoot();
+            frameDocument.body.appendChild(this._frameComponentRoot);
+        }
+
+        ReactDOM.unstable_renderSubtreeIntoContainer(this, (
+            <div>{children}</div>
+        ), this._frameComponentRoot);
     }
 
     render() {
@@ -57,7 +85,7 @@ export default class Frame extends Component {
             <iframe
                 ref='iframe'
                 src={src}
-                {...directProps}
+                {...Object.assign(directProps, { children: null })}
                 />
         );
     }

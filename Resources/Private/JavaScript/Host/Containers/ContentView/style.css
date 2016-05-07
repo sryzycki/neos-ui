@@ -15,7 +15,7 @@
 .contentView--isFullScreen {
     padding: 0;
 }
-.contentView__item {
+.contentView__frame {
     width: 100%;
     height: 100%;
 }
