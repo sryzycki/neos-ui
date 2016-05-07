@@ -1,6 +1,8 @@
 import {actions} from 'Host/Redux/index';
+import signals from 'Host/Signals/index';
 
 export default dispatch => ({
+    signals,
     ui: {
         flashMessages: {
             add(message, severity = 'error') {
@@ -8,8 +10,8 @@ export default dispatch => ({
             }
         },
         contentView: {
-            focusNode(contextPath, typoScriptPath, x, y) {
-
+            focusNode(contextPath, typoscriptPath, x, y) {
+                dispatch(actions.CR.Nodes.focus(contextPath, typoscriptPath));
             },
             mouseEnterNode(contextPath, typoScriptPath, x, y, width, height) {
 

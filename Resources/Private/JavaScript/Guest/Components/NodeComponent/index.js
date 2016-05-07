@@ -1,13 +1,17 @@
 import {
     handle,
-    handleOutside,
     stopPropagation,
     preventDefault
 } from 'Guest/Process/DOMUtils.js';
 
 import style from './style.css';
 
-export default (el, ui, connection) => {
+export default (el, api) => {
+    const {
+        focusNode,
+        mouseEnterNode,
+        mouseLeaveNode
+    } = api.ui.contentView;
     const contextPath = el.dataset.__cheNodeContextpath;
     const typoscriptPath = el.dataset.__cheTyposcriptPath;
 
@@ -16,33 +20,15 @@ export default (el, ui, connection) => {
     //
     // React on guest events
     //
-    handle('click', () => ui.focusNode(contextPath, typoscriptPath), stopPropagation, preventDefault)(el);
-    handleOutside('click', () => ui.blurNode(contextPath, typoscriptPath))(el);
-    handle('mouseover', () => ui.hoverNode(contextPath, typoscriptPath), stopPropagation)(el);
-    handle('mouseout', () => ui.unhoverNode(contextPath, typoscriptPath))(el);
+    handle('click', () => focusNode(contextPath, typoscriptPath), stopPropagation, preventDefault)(el);
+    handle('mouseover', () => mouseEnterNode(contextPath, typoscriptPath), stopPropagation)(el);
+    handle('mouseout', () => mouseLeaveNode(contextPath, typoscriptPath))(el);
 
     //
-    // Observe host state
+    // React on host events
     //
-    const isCurrentNode = res => (
-        res.node &&
-        res.node.contextPath === contextPath &&
-        res.typoscriptPath === typoscriptPath
-    );
-
-    connection.observe('nodes.focused').react(res => {
-        if (isCurrentNode(res)) {
-            el.classList.add(style['node--focused']);
-        } else {
-            el.classList.remove(style['node--focused']);
-        }
-    });
-
-    connection.observe('nodes.hovered').react(res => {
-        if (isCurrentNode(res)) {
-            el.classList.add(style['node--hover']);
-        } else {
-            el.classList.remove(style['node--hover']);
-        }
-    });
+    handle('Neos:UI:NodeFocused', () => el.classList.add(style['node--focused']), stopPropagation)(el);
+    handle('Neos:UI:NodeBlurred', () => el.classList.remove(style['node--focused']), stopPropagation)(el);
+    handle('Neos:UI:NodeMouseEntered', () => el.classList.add(style['node--hover']), stopPropagation)(el);
+    handle('Neos:UI:NodeMouseLeft', () => el.classList.remove(style['node--hover']), stopPropagation)(el);
 };

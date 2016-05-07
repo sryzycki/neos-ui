@@ -63,3 +63,14 @@ export const closestContextPath = el => {
 
     return el.dataset.__cheNodeContextpath || closestContextPath(el.parentNode);
 };
+
+export const findRelatedDOMNode = ({contextPath}, typoScriptPath = '') => {
+    const contextPathSelector = `[data-__che-node-contextpath="${contextPath}"]`;
+    const typoScriptPathSelector = `[data-__che-typoscript-path="${typoScriptPath}"]`;
+
+    if (typoScriptPath) {
+        return document.querySelector(contextPathSelector + typoScriptPathSelector);
+    }
+
+    return document.querySelector(contextPathSelector);
+};

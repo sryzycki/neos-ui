@@ -3,6 +3,7 @@ import {$get} from 'plow-js';
 
 import {actionTypes, actions} from 'Host/Redux/index';
 import {CR} from 'Host/Selectors/index';
+import signals from 'Host/Signals/index';
 
 import {getObservers} from 'Host/Plugins/UI/index';
 
@@ -33,22 +34,19 @@ export function* watchNodes() {
 
 export function* watchFocusedNode() {
     while (true) { // eslint-disable-line no-constant-condition
-        yield race([
-            take(actionTypes.CR.Nodes.FOCUS),
-            take(actionTypes.CR.Nodes.BLUR)
-        ]);
+        const before = yield select();
+        const nodeBefore = getFocusedNode(before);
+        const typoscriptPathBefore = $get('cr.nodes.focused.typoscriptPath', before);
 
-        const state = yield select();
-        const node = getFocusedNode(state);
-        const typoscriptPath = $get('cr.nodes.focused.typoscriptPath', state);
-        const observers = getObservers('nodes.focused');
+        yield take(actionTypes.CR.Nodes.FOCUS);
 
-        try {
-            observers.forEach(observer => observer({node, typoscriptPath}));
-        } catch (err) {
-            console.error(err);
-            yield put(actions.UI.FlashMessages.add('@packagefactory/guevara/ui/plugin/observer/watchFocusedNode',
-                err.message, 'error', 5000));
+        const after = yield select();
+        const nodeAfter = getFocusedNode(after);
+        const typoscriptPathAfter = $get('cr.nodes.focused.typoscriptPath', after);
+
+        if (nodeBefore.contextPath !== nodeAfter.contextPath) {
+            signals.ui.contentView.nodeBlurred.dispatch(nodeBefore, typoscriptPathBefore);
+            signals.ui.contentView.nodeFocused.dispatch(nodeAfter, typoscriptPathAfter);
         }
     }
 }

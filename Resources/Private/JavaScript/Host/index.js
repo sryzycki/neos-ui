@@ -34,7 +34,9 @@ import {
 
 import style from './style.css';
 
+//
 // Initialize the backend application on load.
+//
 document.addEventListener('DOMContentLoaded', () => {
     const appContainer = document.getElementById('appContainer');
     const csrfToken = appContainer.dataset.csrfToken;
