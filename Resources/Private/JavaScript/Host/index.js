@@ -10,7 +10,6 @@ import registry from '@reduct/registry';
 import {configureStore, actions} from './Redux/index';
 
 import initializeJSAPI from 'API/index';
-import {ui} from './Plugins/index';
 
 import * as feedbackHandler from './Service/FeedbackHandler/index';
 
@@ -49,9 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     assign(backend, {
         i18n: i18n(translations)
     });
-
-    // Initialize Neos JS API plugins
-    neos.use(ui(store));
 
     ReactDOM.render(
         <div className={style.applicationWrapper}>

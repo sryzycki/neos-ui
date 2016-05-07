@@ -6,7 +6,9 @@ export default dispatch => ({
     ui: {
         flashMessages: {
             add(message, severity = 'error') {
+                const id = String(Math.abs(Math.random() * 10000));
 
+                dispatch(actions.UI.FlashMessages.add(id, message, severity));
             }
         },
         contentView: {
