@@ -47,23 +47,23 @@ document.addEventListener('Neos:UI:ContentLoaded', e => {
     //
     const {contentView} = api.signals.ui;
 
-    contentView.nodeFocused.add((node, typoScriptPath) => {
-        const dom = findRelatedDOMNode(node, typoScriptPath);
+    contentView.nodeFocused.add((contextPath, typoScriptPath) => {
+        const dom = findRelatedDOMNode(contextPath, typoScriptPath);
         dom && dom.dispatchEvent(nodeFocused());
     });
 
-    contentView.nodeBlurred.add((node, typoScriptPath) => {
-        const dom = findRelatedDOMNode(node, typoScriptPath);
+    contentView.nodeBlurred.add((contextPath, typoScriptPath) => {
+        const dom = findRelatedDOMNode(contextPath, typoScriptPath);
         dom && dom.dispatchEvent(nodeBlurred());
     });
 
-    contentView.nodeMouseEntered.add((node, typoScriptPath) => {
-        const dom = findRelatedDOMNode(node, typoScriptPath);
+    contentView.nodeMouseEntered.add((contextPath, typoScriptPath) => {
+        const dom = findRelatedDOMNode(contextPath, typoScriptPath);
         dom && dom.dispatchEvent(nodeMouseEntered());
     });
 
-    contentView.nodeMouseLeft.add((node, typoScriptPath) => {
-        const dom = findRelatedDOMNode(node, typoScriptPath);
+    contentView.nodeMouseLeft.add((contextPath, typoScriptPath) => {
+        const dom = findRelatedDOMNode(contextPath, typoScriptPath);
         dom && dom.dispatchEvent(nodeMouseLeft());
     });
 });

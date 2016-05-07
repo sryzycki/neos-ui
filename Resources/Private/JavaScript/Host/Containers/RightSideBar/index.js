@@ -3,7 +3,7 @@ import mergeClassNames from 'classnames';
 import {connect} from 'react-redux';
 import {$transform, $get} from 'plow-js';
 
-import {CR} from 'Host/Selectors/index';
+import {UI, CR} from 'Host/Selectors/index';
 import {
     SideBar,
     Tabs,
@@ -35,11 +35,14 @@ const renderTab = (tab, focusedNode) => {
     );
 };
 
-@connect($transform({
+@connect(state => $transform({
     isHidden: $get('ui.rightSideBar.isHidden'),
     isFullScreen: $get('ui.fullScreen.isFullScreen'),
-    focusedNode: CR.Nodes.focusedSelector
-}), {
+    focusedNode: CR.Nodes.byContextPathSelector(
+        UI.ContentView.focusedSelector(state).contextPath ||
+        UI.ContentView.contextPathSelector(state)
+    )
+}, state), {
     toggleSidebar: actions.UI.RightSideBar.toggle
 })
 export default class RightSideBar extends Component {

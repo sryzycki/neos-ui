@@ -28,26 +28,6 @@ const resolveNodeFromContextPath = (contextPath, getStoredNodeByContextPath, get
     return storedNode && prepareStoredNodeForUsage(storedNode, getNodeType).toJS();
 };
 
-export const focusedSelector = createSelector(
-    [
-        focused,
-        currentDocumentNode,
-        storedNodeByContextPath,
-        nodeTypeByNameSelector
-    ],
-    (focused, currentDocumentNode, storedNode, nodeType) =>
-        resolveNodeFromContextPath(focused || currentDocumentNode, storedNode, nodeType)
-);
-
-export const hoveredSelector = createSelector(
-    [
-        hovered,
-        storedNodeByContextPath,
-        nodeTypeByNameSelector
-    ],
-    resolveNodeFromContextPath
-);
-
 export const byContextPathSelector = defaultMemoize(
     contextPath => createSelector(
         [

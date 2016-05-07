@@ -101,7 +101,7 @@ export default class ContentView extends Component {
                     className={style.contentView__frame}
                     onContentLoad={frame => this.initializeGuestFrame(frame)}
                     >
-                    <NodeToolbar toolbar={{x: 0, y: 0}} />
+                    <NodeToolbar toolbar={{x: 0, y: 0, isVisible: true}} />
                 </Frame>
             </div>
         );
