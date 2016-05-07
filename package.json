@@ -87,6 +87,8 @@
     "lodash.merge": "^4.3.5",
     "normalize.css": "^4.1.1",
     "plow-js": "^1.2.0",
+    "postal": "^2.0.0",
+    "postal.xframe": "^0.5.0",
     "react": "^15.0.1",
     "react-click-outside": "^2.1.0",
     "react-collapse": "^2.2.0",
