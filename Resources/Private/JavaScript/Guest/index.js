@@ -11,8 +11,7 @@ const connection = ui.connect();
 document.addEventListener('Neos:UI:ContentLoaded', e => {
     const {api} = e.detail;
 
-    api.test();
-
     domConnector(ui, connection);
-    ui.setDocumentInformation(window.name, window['@PackageFactory.Guevara:DocumentInformation']);
+
+    api.ui.contentView.setDocumentInformation(window['@PackageFactory.Guevara:DocumentInformation']);
 });

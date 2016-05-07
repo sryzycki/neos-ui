@@ -4,6 +4,7 @@ import mergeClassNames from 'classnames';
 import {$transform, $get} from 'plow-js';
 
 import {Frame} from 'Components/index';
+import createApi from 'Host/Expose/API/index';
 
 import style from './style.css';
 
@@ -20,12 +21,20 @@ export default class ContentView extends Component {
         isFringeRight: PropTypes.bool.isRequired,
         isFullScreen: PropTypes.bool.isRequired,
         src: PropTypes.string.isRequired,
-        contextPath: PropTypes.string.isRequired
+        contextPath: PropTypes.string.isRequired,
+
+        dispatch: PropTypes.func.isRequired
     };
 
     render() {
-        const {isFringeLeft, isFringeRight, isFullScreen, src, contextPath} = this.props;
-
+        const {
+            isFringeLeft,
+            isFringeRight,
+            isFullScreen,
+            src,
+            contextPath,
+            dispatch
+        } = this.props;
         const classNames = mergeClassNames({
             [style.contentView]: true,
             [style['contentView--isFringeLeft']]: isFringeLeft,
@@ -38,15 +47,13 @@ export default class ContentView extends Component {
                 <Frame
                     src={src}
                     frameBorder="0"
-                    name={'neos-content-main'}
+                    name="neos-content-main"
                     data-context-path={contextPath}
                     className={style.contentView__item}
                     onContentLoad={frame => {
                         const loadEvent = frame.document.createEvent('CustomEvent');
                         loadEvent.initCustomEvent('Neos:UI:ContentLoaded', true, true, {
-                            api: {
-                                test: () => console.log('Api connection works')
-                            }
+                            api: createApi(dispatch)
                         });
 
                         frame.document.dispatchEvent(loadEvent);
