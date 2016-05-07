@@ -13,11 +13,11 @@ export default dispatch => ({
             focusNode(contextPath, typoscriptPath, x, y) {
                 dispatch(actions.CR.Nodes.focus(contextPath, typoscriptPath));
             },
-            mouseEnterNode(contextPath, typoScriptPath, x, y, width, height) {
-
+            mouseEnterNode(contextPath, typoscriptPath) {
+                dispatch(actions.CR.Nodes.hover(contextPath, typoscriptPath));
             },
-            mouseLeaveNode(contextPath, typoScriptPath) {
-
+            mouseLeaveNode(contextPath, typoscriptPath) {
+                dispatch(actions.CR.Nodes.unhover(contextPath, typoscriptPath));
             }
         }
     },

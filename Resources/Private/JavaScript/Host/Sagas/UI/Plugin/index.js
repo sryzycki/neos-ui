@@ -55,22 +55,20 @@ export function* watchFocusedNode() {
 
 export function* watchHoveredNode() {
     while (true) { // eslint-disable-line no-constant-condition
-        yield race([
-            take(actionTypes.CR.Nodes.HOVER),
-            take(actionTypes.CR.Nodes.UNHOVER)
-        ]);
+        yield take(actionTypes.CR.Nodes.HOVER);
 
         const state = yield select();
         const node = getHoveredNode(state);
         const typoscriptPath = $get('cr.nodes.hovered.typoscriptPath', state);
-        const observers = getObservers('nodes.hovered');
 
-        try {
-            observers.forEach(observer => observer({node, typoscriptPath}));
-        } catch (err) {
-            console.error(err);
-            yield put(actions.UI.FlashMessages.add('@packagefactory/guevara/ui/plugin/observer/watchHoveredNode',
-                err.message, 'error', 5000));
-        }
+        setTimeout(() => {
+            signals.ui.contentView.nodeMouseEntered.dispatch(node, typoscriptPath);
+        }, 0);
+
+        yield take(actionTypes.CR.Nodes.UNHOVER);
+
+        setTimeout(() => {
+            signals.ui.contentView.nodeMouseLeft.dispatch(node, typoscriptPath);
+        }, 0);
     }
 }
