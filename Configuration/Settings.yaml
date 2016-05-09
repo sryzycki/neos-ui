@@ -16,6 +16,12 @@ TYPO3:
       'Guevara.Activation': 'PackageFactory\Guevara\TypoScript\Helper\ActivationHelper'
 PackageFactory:
   Guevara:
+    asyncModuleMapping:
+      'resource://PackageFactory.Guevara/Public/JavaScript/InlineEditors.js':
+        - 'PackageFactory.Guevara:CKEditor'
+        - 'PackageFactory.Guevara:TextArea'
+      'resource://PackageFactory.Guevara/Public/JavaScript/SystemTest.js':
+        - 'PackageFactory.Guevara:SystemTest'
     # All PRIVATE, not meant for public extensibility.
     state:
       defaultEelContext:

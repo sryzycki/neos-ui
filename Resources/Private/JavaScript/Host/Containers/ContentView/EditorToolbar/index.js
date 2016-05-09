@@ -1,15 +1,22 @@
 import React, {Component, PropTypes} from 'react';
 import Measure from 'react-measure';
 import {connect} from 'react-redux';
-import mergeClassNames from 'classnames';
-import {$get} from 'plow-js';
+import {$transform, $get} from 'plow-js';
 
-import processConfiguration from './ProcessConfiguration/index';
+import {Toolbar} from 'Components/index';
+
 import * as SubComponents from './SubComponents/index';
-import style from './style.css';
 
-@connect()
-export default class Toolbar extends Component {
+@connect(state => $transform({
+    x: $get('ui.contentView.toolbars', state).toJS().position.left,
+    y: $get('ui.contentView.toolbars', state).toJS().position.top,
+    isVisible: $get('ui.contentView.toolbars.current', state) !== '',
+    configuration: $get([
+        'ui', 'contentView', 'toolbars', 'configurations',
+        $get('ui.contentView.toolbars.current', state)
+    ])
+}, state))
+export default class EditorToolbar extends Component {
     static propTypes = {
         x: PropTypes.number.isRequired,
         y: PropTypes.number.isRequired,
@@ -23,7 +30,7 @@ export default class Toolbar extends Component {
             ).isRequired
         }),
 
-        dispatchEditorSignal: PropTypes.func
+        dispatch: PropTypes.func.isRequired
     };
 
     state = {
@@ -31,11 +38,7 @@ export default class Toolbar extends Component {
     };
 
     render() {
-        const {isVisible, configuration, dispatchEditorSignal} = this.props;
-        const classNames = mergeClassNames({
-            [style.toolBar]: true,
-            [style['toolBar--isHidden']]: !isVisible
-        });
+        const {isVisible, configuration, dispatch} = this.props;
 
         return (
             <Measure
@@ -43,25 +46,22 @@ export default class Toolbar extends Component {
                 shouldMeasure={mutations => mutations ? mutations[0].target : false}
                 onMeasure={dimensions => this.setState({dimensions})}
                 >
-                <div className={classNames} style={this.getPosition()}>
-                    <div className={style.toolBar__btnGroup}>
+                <Toolbar position={this.getPosition()} isVisible={isVisible}>
                     {configuration && configuration.components.filter(
                         component => component.isEnabled
                     ).map(
                         (component, index) => {
                             const SubComponent = SubComponents[component.type];
-
                             return (
                                 <SubComponent
                                     key={index}
                                     configuration={component.options}
-                                    dispatchEditorSignal={dispatchEditorSignal}
+                                    onAction={payload => dispatch()}
                                     />
                             );
                         }
                     )}
-                    </div>
-                </div>
+                </Toolbar>
             </Measure>
         );
     }
@@ -71,25 +71,8 @@ export default class Toolbar extends Component {
         const {width} = this.state.dimensions;
 
         return {
-            top: y - 49,
-            left: Math.min(x, window.innerWidth - width - 20) - 9
+            y: y - 49,
+            x: Math.min(x, window.innerWidth - width - 20) - 9
         };
     }
 }
-
-let debounceToolbarUpdateTimeout = null;
-export const registerToolbar = ({dispatch}, configuration) => {
-    const initialConfiguration = processConfiguration(configuration);
-
-    return () => {
-        clearTimeout(debounceToolbarUpdateTimeout);
-
-        debounceToolbarUpdateTimeout = setTimeout(
-            () => {
-                const processedConfiguration = processConfiguration(configuration, initialConfiguration);
-                dispatch(actions.EditorToolbar.setConfiguration(processedConfiguration));
-            },
-            100
-        );
-    };
-};

@@ -1,6 +1,7 @@
 .dropDown {
     position: relative;
     display: inline-block;
+    background-color: $darker;
 }
 .dropDown__btn {
     display: block;
@@ -9,6 +10,9 @@
     color: white;
     cursor: pointer;
     padding: 0 32px 0 $spacing;
+    background-color: $darker;
+    border: 0;
+    height: 40px;
 
     &:focus {
         outline: 1px dotted $brightest;

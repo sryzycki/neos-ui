@@ -3,7 +3,9 @@ import 'babel-polyfill';
 
 import {nodeComponent} from 'Guest/Components/index';
 import {closestContextPath, findRelatedDOMNode} from 'Guest/Process/DOMUtils.js';
-import ckEditor from 'Guest/Components/Editors/CKEditor/index';
+import createInlineEditorRegistry from 'Guest/Process/InlineEditorRegistry.js';
+import initializePluginApi from 'Guest/Expose/index';
+import createEditorApi from 'Guest/Expose/EditorAPI/index';
 
 import {
     nodeFocused,
@@ -17,6 +19,13 @@ import {
 //
 document.addEventListener('Neos:UI:ContentLoaded', e => {
     const {api, contextPath} = e.detail;
+    const inlineEditorRegistry = createInlineEditorRegistry(api.configuration.asyncModuleMapping);
+    const editorApi = createEditorApi(api);
+
+    //
+    // Initialize plugin API
+    //
+    initializePluginApi(inlineEditorRegistry);
 
     //
     // Initialize node components
@@ -30,8 +39,14 @@ document.addEventListener('Neos:UI:ContentLoaded', e => {
     [].slice.call(document.querySelectorAll('[data-__che-property]')).forEach(dom => {
         const contextPath = closestContextPath(dom);
         const propertyName = dom.dataset.__cheProperty;
+        const node = api.cr.getNodeImmediate(contextPath);
 
-        // ckEditor({contextPath, propertyName}, dom, api);
+        inlineEditorRegistry.get('PackageFactory.Guevara:CKEditor').then(
+            factory => setTimeout(() => factory(dom, {
+                node,
+                propertyName
+            }, editorApi), 0)
+        );
     });
 
     //

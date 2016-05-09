@@ -27,26 +27,26 @@ export default class ToolbarDropDown extends Component {
         const {items, placeholder} = this.props.configuration;
 
         return (
-            <div className={style.wrapper}>
-                <DropDown className={style.dropDown}>
-                    <DropDown.Header className={style.dropDown__btn}>
+            <div style={{width: '220px', display: 'inline-block'}}>
+                <DropDown>
+                    <DropDown.Header>
                         {items.filter(
                             item => item.isActive
                         ).map(item =>
                             [
-                                <Icon icon={item.icon} className={style.dropDown__itemIcon} />,
+                                <Icon icon={item.icon} />,
                                 item.label
                             ]
                         )[0] || placeholder}
                     </DropDown.Header>
-                    <DropDown.Contents className={style.dropDown__contents}>
+                    <DropDown.Contents>
                         {items.filter(
                             item => item.isEnabled
                         ).map(
                             item => (
-                                <li className={style.dropDown__item}>
+                                <li>
                                     <button type="button" onClick={() => dispatchEditorSignal(item.onSelect)}>
-                                        <Icon icon={item.icon} className={style.dropDown__itemIcon} />
+                                        <Icon icon={item.icon} />
                                         {item.label}
                                     </button>
                                 </li>

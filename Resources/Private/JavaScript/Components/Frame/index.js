@@ -1,6 +1,32 @@
 import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 
+const ISOLATED_EVENTS = [
+    'click',
+    'dblclick',
+    'drag',
+    'dragend',
+    'dragenter',
+    'dragleave',
+    'dragover',
+    'dragstart',
+    'drop',
+    'focus',
+    'focusin',
+    'focusout',
+    'keydown',
+    'keypress',
+    'keyup',
+    'mousedown',
+    'mouseenter',
+    'mouseleave',
+    'mousemove',
+    'mouseout',
+    'mouseover',
+    'mouseup',
+    'mousewheel'
+];
+
 export default class Frame extends Component {
     static propTypes = {
         src: PropTypes.string.isRequired,
@@ -28,16 +54,18 @@ export default class Frame extends Component {
         //
         // Forward clicks to the parent frame
         //
-        frame.document.addEventListener('click', () => {
-            const parentDocument = frame.parent.document;
+        frame.document.addEventListener('click', e => {
+            if (!e['@neos/inline-ui-event']) {
+                const parentDocument = frame.parent.document;
 
-            if (parentDocument.createEvent) {
-                const eventObject = parentDocument.createEvent('MouseEvents');
-                eventObject.initEvent('click', true, false);
-                parentDocument.dispatchEvent(eventObject);
-            } else if (parentDocument.createEventObject) {
-                const eventObject = parentDocument.createEventObject();
-                parentDocument.fireEvent('onclick', eventObject);
+                if (parentDocument.createEvent) {
+                    const eventObject = parentDocument.createEvent('MouseEvents');
+                    eventObject.initEvent('click', true, false);
+                    parentDocument.dispatchEvent(eventObject);
+                } else if (parentDocument.createEventObject) {
+                    const eventObject = parentDocument.createEventObject();
+                    parentDocument.fireEvent('onclick', eventObject);
+                }
             }
         });
 
@@ -70,6 +98,21 @@ export default class Frame extends Component {
         if (!this._frameComponentRoot) {
             const FrameComponentRoot = frameDocument.registerElement('neos-ui-root');
             this._frameComponentRoot = new FrameComponentRoot();
+            //
+            // Attach some source information to events that are fired
+            // from withing the inline UI, so that if in doubt they can
+            // be handled differently
+            //
+            ISOLATED_EVENTS.forEach(
+                event => this._frameComponentRoot.addEventListener(event, e => {
+                    //
+                    // React captures its own events on document level - so we cannot stop propagation at this point.
+                    // We need to attach this flag on particular events that are passing through the application
+                    // container to then handle them differently (e.g. click outside)
+                    //
+                    e['@neos/inline-ui-event'] = true;
+                })
+            );
             frameDocument.body.appendChild(this._frameComponentRoot);
         }
 

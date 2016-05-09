@@ -24,7 +24,7 @@ export default class Toolbar extends Component {
             [style['toolBar--isHidden']]: !isVisible,
 
         });
-        const styles = position ? {
+        const styles = Boolean(position) ? {
             top: position.y,
             left: position.x
         } : {};

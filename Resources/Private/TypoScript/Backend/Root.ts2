@@ -3,6 +3,9 @@ include: resource://PackageFactory.Guevara/Private/TypoScript/Prototypes/RenderS
 backend = TYPO3.TypoScript:Template {
     templatePath = 'resource://PackageFactory.Guevara/Private/Templates/Backend/Index.html'
 
+    asyncModuleMapping = ${asyncModuleMapping}
+    asyncModuleMapping.@process.json = ${Json.stringify(value)}
+
     initialState = PackageFactory.Guevara:RenderState {
         state = 'backend'
         context {

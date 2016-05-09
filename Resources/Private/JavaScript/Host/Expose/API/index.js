@@ -1,7 +1,9 @@
 import {actions} from 'Host/Redux/index';
 import signals from 'Host/Signals/index';
+import {CR} from 'Host/Selectors/index';
 
-export default dispatch => ({
+export default ({dispatch, getState}, configuration) => ({
+    configuration,
     signals,
     ui: {
         flashMessages: {
@@ -20,6 +22,18 @@ export default dispatch => ({
             },
             mouseLeaveNode(contextPath, typoscriptPath) {
                 dispatch(actions.UI.ContentView.unhoverNode(contextPath, typoscriptPath));
+            },
+            addToolbar(toolbarId, configuration) {
+                dispatch(actions.UI.ContentView.addToolbar(toolbarId, configuration));
+            },
+            updateToolbar(toolbarId, configuration) {
+                dispatch(actions.UI.ContentView.updateToolbar(toolbarId, configuration));
+            },
+            showToolbar(toolbarId, position) {
+                dispatch(actions.UI.ContentView.showToolbar(toolbarId, position));
+            },
+            hideToolbar(toolbarId) {
+                dispatch(actions.UI.ContentView.hideToolbar(toolbarId));
             }
         }
     },
@@ -38,6 +52,11 @@ export default dispatch => ({
 
         deleteNode(contextPath) {
 
+        },
+
+        getNodeImmediate(contextPath) {
+            const state = getState();
+            return CR.Nodes.byContextPathSelector(contextPath)(state);
         }
     }
 });

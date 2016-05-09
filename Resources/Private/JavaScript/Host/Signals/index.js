@@ -6,7 +6,8 @@ export default {
             nodeFocused: new Signal(),
             nodeBlurred: new Signal(),
             nodeMouseEntered: new Signal(),
-            nodeMouseLeft: new Signal()
+            nodeMouseLeft: new Signal(),
+            toolbar: new Signal()
         }
     }
 };

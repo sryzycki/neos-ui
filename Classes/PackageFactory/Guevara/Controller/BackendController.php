@@ -22,6 +22,7 @@ use TYPO3\Flow\I18n\Locale;
 use TYPO3\TypoScript\Core\Cache\ContentCache;
 use TYPO3\TypoScript\View\TypoScriptView;
 use TYPO3\Flow\Mvc\View\ViewInterface;
+use TYPO3\Flow\Resource\ResourceManager;
 
 class BackendController extends ActionController
 {
@@ -86,6 +87,18 @@ class BackendController extends ActionController
      */
     protected $contentCache;
 
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
+
+    /**
+     * @Flow\InjectConfiguration(path="asyncModuleMapping")
+     * @var array
+     */
+    protected $asyncModuleMapping;
+
     public function initializeView(ViewInterface $view)
     {
         $view->setTypoScriptPath('backend');
@@ -120,6 +133,7 @@ class BackendController extends ActionController
             $this->view->assign('user', $user);
             $this->view->assign('documentNode', $node);
             $this->view->assign('site', $node);
+            $this->view->assign('asyncModuleMapping', $this->transformAsyncModuleMapping());
 
             $this->view->assign('translations', $this->xliffService->getCachedJson(
                 new Locale($this->userService->getInterfaceLanguage())
@@ -128,6 +142,42 @@ class BackendController extends ActionController
         }
 
         $this->redirectToUri($this->uriBuilder->uriFor('index', array(), 'Login', 'TYPO3.Neos'));
+    }
+
+    /**
+     * Creates a key-value list of JS modules and their sources files
+     * out of the given configuration
+     *
+     * @return array
+     */
+    protected function transformAsyncModuleMapping()
+    {
+        $finalMapping = [];
+
+        foreach ($this->asyncModuleMapping as $path => $modules) {
+            if (preg_match('#resource://([^/]+)/Public/(.*)#', $path, $matches) === 1) {
+                $packageKey = $matches[1];
+                $path = $matches[2];
+                $realPath = $this->resourceManager->getPublicPackageResourceUri($packageKey, $path);
+
+                foreach ($modules as $module) {
+                    $finalMapping[$module] = $realPath;
+                }
+
+                continue;
+            }
+
+            throw new \Exception(
+                sprintf(
+                    '"%s" is not a valid path to a public JavaScript. '.
+                    'Please provide a resource path ("resource://...")',
+                    $path
+                ),
+                1462703658
+            );
+        }
+
+        return $finalMapping;
     }
 
     /**

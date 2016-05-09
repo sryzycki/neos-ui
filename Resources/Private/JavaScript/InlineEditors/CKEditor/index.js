@@ -1,19 +1,24 @@
 import {handleOutside} from 'Guest/Process/DOMUtils.js';
-import createEditor from 'Guest/Components/Editors/CreateEditor/index';
-
 import getConfiguration from './Configuration/index';
 import createToolbarConfiguration from './Toolbar/index';
 import getSelectionData from './Selection/index';
 import ckApi from './API/index';
 
-const createCKEditorInstance = (node, property, editorApi, dom) => {
+export default (el, {node, propertyName}, editorApi) => {
     let removeBlurEvent = null;
-    const configuration = getConfiguration(node, property);
-    const editor = ckApi.create(dom, configuration);
-    const updateToolbarConfiguration = createToolbarConfiguration(
-        editor,
-        editorApi,
-        configuration
+    el.setAttribute('contentEditable', true);
+
+    const configuration = getConfiguration(node, propertyName);
+    const editor = ckApi.create(el, configuration);
+    const toolbarId = `${node.contextPath}::${propertyName}`;
+    const toolbar = editorApi.toolbar.create(
+        toolbarId,
+        createToolbarConfiguration(
+            editor,
+            editorApi,
+            toolbarId,
+            configuration
+        )
     );
     const handleUserInteraction = event => {
         if (event.name !== 'keyup' || event.data.$.keyCode !== 27) {
@@ -22,13 +27,10 @@ const createCKEditorInstance = (node, property, editorApi, dom) => {
             if (selectionData) {
                 const {left, top} = selectionData.region;
 
-                editorApi.setToolbarPosition(left, top);
-                updateToolbarConfiguration();
-
                 if (selectionData.isEmpty) {
-                    editorApi.hideToolbar();
+                    editorApi.toolbar.hide();
                 } else {
-                    editorApi.showToolbar();
+                    editorApi.toolbar.show(toolbar, {left, top});
                 }
             }
         }
@@ -44,7 +46,7 @@ const createCKEditorInstance = (node, property, editorApi, dom) => {
         }
 
         handleUserInteraction(event);
-        editorApi.hideToolbar();
+        editorApi.toolbar.hide();
     };
     const handleEditorFocus = event => {
         const editable = editor.editable();
@@ -61,10 +63,7 @@ const createCKEditorInstance = (node, property, editorApi, dom) => {
         editable.attachListener(editable, 'focus', handleEditorFocus);
 
         editor.on('change', () => {
-            updateToolbarConfiguration();
             editorApi.commit(editor.getData());
         });
     });
 };
-
-export default createEditor(createCKEditorInstance);

@@ -92,7 +92,6 @@ export class Header extends Component {
                 ref={btn => {
                     const method = isOpened ? 'focus' : 'blur';
 
-                    // Initially focus the btn if the propType was set.
                     if (btn !== null) {
                         btn[method]();
                     }

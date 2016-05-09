@@ -8,13 +8,14 @@ import createApi from 'Host/Expose/API/index';
 import {actions} from 'Host/Redux/index';
 
 import NodeToolbar from './NodeToolbar/index';
+import EditorToolbar from './EditorToolbar/index';
 import style from './style.css';
 
 //
 // Expose the UI API to the guest frame via an event, so it
 // does not pollute global scope
 //
-const exposeApiToGuestFrame = (dispatch, frame) => {
+const exposeApiToGuestFrame = (api, frame) => {
     const loadEvent = frame.document.createEvent('CustomEvent');
     const documentInformation = frame['@PackageFactory.Guevara:DocumentInformation'];
 
@@ -24,7 +25,7 @@ const exposeApiToGuestFrame = (dispatch, frame) => {
 
     loadEvent.initCustomEvent('Neos:UI:ContentLoaded', true, true, {
         contextPath: documentInformation.metaData.contextPath,
-        api: createApi(dispatch)
+        api
     });
 
     frame.document.dispatchEvent(loadEvent);
@@ -68,14 +69,15 @@ export default class ContentView extends Component {
         isFullScreen: PropTypes.bool.isRequired,
         src: PropTypes.string.isRequired,
 
+        api: PropTypes.object.isRequired,
         dispatch: PropTypes.func.isRequired
     };
 
     initializeGuestFrame(frame) {
-        const {dispatch} = this.props;
+        const {api, dispatch} = this.props;
 
         consumeDocumentInformationFromGuestFrame(dispatch, frame);
-        exposeApiToGuestFrame(dispatch, frame);
+        exposeApiToGuestFrame(api, frame);
     }
 
     render() {
@@ -102,6 +104,7 @@ export default class ContentView extends Component {
                     onContentLoad={frame => this.initializeGuestFrame(frame)}
                     >
                     <NodeToolbar />
+                    <EditorToolbar />
                 </Frame>
             </div>
         );

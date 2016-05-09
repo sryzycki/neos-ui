@@ -68,6 +68,7 @@ const config = {
 
     entry: {
         Host: './Resources/Private/JavaScript/Host/index.js',
+        InlineEditors: './Resources/Private/JavaScript/InlineEditors/index.js',
 
         //
         // Workaround according to https://github.com/webpack/webpack/issues/300,
