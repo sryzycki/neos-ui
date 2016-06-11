@@ -19,7 +19,8 @@
         "sinon": false,
         "browser": true,
         "Promise": true,
-        "__neosSelenium": true
+        "__neosSelenium": true,
+        "se": true
     },
     "rules": {
         // Errors

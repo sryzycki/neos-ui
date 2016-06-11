@@ -3,7 +3,7 @@ const fs = require('fs');
 const env = require('./Environment');
 
 module.exports = function readYaml(path, fileNotFoundMessage) {
-    var data = {};
+    let data = {};
 
     try {
         data = yaml.safeLoad(fs.readFileSync(path, 'utf8'));
